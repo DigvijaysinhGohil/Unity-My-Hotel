@@ -3,15 +3,17 @@ using UnityEngine;
 public class PlayerController : MonoBehaviour
 {
 	private CharacterAnimationController animationController;
+	private CharacterAudioController audioController;
 	private Rigidbody rigidBody;
 	private Vector3 inputVector;
 
 	[SerializeField] private float speed = 10;
-	[Range(0.01f, 1f), SerializeField] private float rotationDamp = .1f;
+	[SerializeField] private float rotationDamp = .1f;
 
 	private void Awake() {
 		rigidBody = GetComponent<Rigidbody>();
 		animationController = GetComponent<CharacterAnimationController>();
+		audioController = GetComponent<CharacterAudioController>();
 	}
 
 	private void Update() {
@@ -38,7 +40,7 @@ public class PlayerController : MonoBehaviour
 		if(inputVector.sqrMagnitude > ROTATE_THRESHOLD) {
 			targetRotation = Quaternion.LookRotation(inputVector, Vector3.up);
 		}
-		transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, rotationDamp);
+		transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, rotationDamp * Time.deltaTime);
 	}
 
 	private void UpdateAnimation() {
@@ -46,5 +48,8 @@ public class PlayerController : MonoBehaviour
 			return;
 
 		animationController.SetSpeed(inputVector.sqrMagnitude);
+		
+		const float SOUND_THRESHOLD = 0.2f;
+		audioController.FootstepSfx(inputVector.sqrMagnitude > SOUND_THRESHOLD);
 	}
 }
