@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-public class UpgradeElement : MonoBehaviour
+public class UpgradeElement : Interactable
 {
 	private AudioSource spendMoney;
 
@@ -14,16 +14,15 @@ public class UpgradeElement : MonoBehaviour
 		spendMoney = GetComponent<AudioSource>();
 	}
 
-	private void OnTriggerEnter(Collider other) {
-		if(other.TryGetComponent<PlayerController>(out PlayerController player)) {
-			if(MoneyController.Instance.Money >= upgradeCost) {
-				StartUpgrade();
-			}
+	protected override void PlayerInteracted(PlayerController player) {
+		if(MoneyController.Instance.Money >= upgradeCost) {
+			StartUpgrade();
 		}
 	}
 
-	private void OnTriggerExit(Collider other) {
-		if(other.TryGetComponent<PlayerController>(out PlayerController player)) {
+	protected override void PlayerStoppedInteracting(PlayerController player) {
+		const float CANCEL_THRESHOLD = 0.9f;
+		if(progressFill.fillAmount < CANCEL_THRESHOLD) {
 			CancelUpgrade();
 		}
 	}

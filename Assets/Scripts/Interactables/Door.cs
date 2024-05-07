@@ -1,6 +1,8 @@
 using UnityEngine;
 
-public class Door : MonoBehaviour {
+public class Door : Interactable {
+	private int characterCountInArea = 0;
+
 	public bool interactableByPlayer = true;
 	[SerializeField] private float animationTime = 1f;
 	[SerializeField] private float openAngle = -110f;
@@ -10,22 +12,30 @@ public class Door : MonoBehaviour {
 	[SerializeField] private AudioSource doorOpenSfx;
 	[SerializeField] private AudioSource doorCloseSfx;
 
-	private void OnTriggerEnter(Collider other) {
-		if(other.TryGetComponent<PlayerController>(out PlayerController player)) {
-			if(!interactableByPlayer) {
-				return;
-			}
-			OpenDoor();
-		}
+	protected override void PlayerInteracted(PlayerController player) {
+		if(!interactableByPlayer)
+			return;
+
+		characterCountInArea++;
+		OpenDoor();
 	}
 
-	private void OnTriggerExit(Collider other) {
-		if(other.TryGetComponent<PlayerController>(out PlayerController player)) {
-			if(!interactableByPlayer) {
-				return;
-			}
-			CloseDoor();
-		}
+	protected override void PlayerStoppedInteracting(PlayerController player) {
+		if(!interactableByPlayer)
+			return;
+
+		characterCountInArea--;
+		CloseDoor();
+	}
+
+	protected override void NpcInteracated(NPC npc) {
+		characterCountInArea++;
+		OpenDoor();
+	}
+
+	protected override void NpcStoppedInteracting(NPC npc) {
+		characterCountInArea--;
+		CloseDoor();
 	}
 
 	private void OpenDoor() {
@@ -36,6 +46,8 @@ public class Door : MonoBehaviour {
 	}
 
 	private void CloseDoor() {
+		if(characterCountInArea > 0)
+			return; // SOMEONE IS STANDING IN INTERACTABLE AREA
 		LeanTween.cancelAll();
 		doorCloseSfx.Play();
 		LTDescr tween = LeanTween.rotateLocal(doorObject.gameObject, new Vector3(0, closeAngle, 0), animationTime);

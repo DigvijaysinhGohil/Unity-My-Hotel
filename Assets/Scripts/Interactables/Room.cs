@@ -1,8 +1,9 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-public class Room : MonoBehaviour
+public class Room : Interactable
 {
+	public bool isUnlocked = true;
 	public bool isOccupied = false;
 	public bool isDirty = false;
 
@@ -14,23 +15,10 @@ public class Room : MonoBehaviour
 	[SerializeField] private AudioSource clock;
 
 	private void Awake() {
+		if(!isUnlocked) {
+			transform.localScale = Vector3.right;
+		}
 		roomUnlocked = GetComponent<AudioSource>();
-	}
-
-	private void OnTriggerEnter(Collider other) {
-		if(other.TryGetComponent<PlayerController>(out PlayerController player)) {
-			if(isDirty) {
-				StartCleaning();
-			}
-		}
-	}
-
-	private void OnTriggerExit(Collider other) {
-		if(other.TryGetComponent<PlayerController>(out PlayerController player)) {
-			if(isDirty) {
-				CancelCleaning();
-			}
-		}
 	}
 
 	private void Update() {
@@ -38,6 +26,18 @@ public class Room : MonoBehaviour
 			SetDirty(true);
 		}
 	}
+
+	protected override void PlayerInteracted(PlayerController player) {
+		if(isDirty) {
+			StartCleaning();
+		}
+	}
+
+	protected override void PlayerStoppedInteracting(PlayerController player) {
+        if (isDirty) {
+			CancelCleaning();
+        }
+    }
 
 	private void StartCleaning() {
 		const float CLEAN_TIME = 5f;

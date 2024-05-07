@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class MoneyBundle : MonoBehaviour
+public class MoneyBundle : Interactable
 {
 	private AudioSource collectMoney;
 	private BoxCollider boxCollider;
@@ -14,19 +14,17 @@ public class MoneyBundle : MonoBehaviour
 		boxCollider = GetComponent<BoxCollider>();
 	}
 
-	private void OnTriggerEnter(Collider other) {
-		if (other.TryGetComponent<PlayerController>(out PlayerController player)) {
-			Destroy(boxCollider);
-			ParticleSystem particles = Instantiate(moneyParticles, transform.position, Quaternion.identity);
-			particles.Play();
-			const float DESTROY_DELAY = 2f;
-			Destroy(particles.gameObject, DESTROY_DELAY);
-			MoneyController.Instance.AddMoney(money);
-			foreach(Transform child in transform) {
-				child.gameObject.SetActive(false);
-			}
-			collectMoney.Play();
-			Destroy(gameObject, DESTROY_DELAY);
+	protected override void PlayerInteracted(PlayerController player) {
+		Destroy(boxCollider);
+		ParticleSystem particles = Instantiate(moneyParticles, transform.position, Quaternion.identity);
+		particles.Play();
+		const float DESTROY_DELAY = 2f;
+		Destroy(particles.gameObject, DESTROY_DELAY);
+		MoneyController.Instance.AddMoney(money);
+		foreach(Transform child in transform) {
+			child.gameObject.SetActive(false);
 		}
+		collectMoney.Play();
+		Destroy(gameObject, DESTROY_DELAY);
 	}
 }
