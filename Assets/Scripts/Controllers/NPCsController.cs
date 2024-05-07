@@ -13,6 +13,11 @@ public class NPCsController : MonoBehaviour
 		customerNpc = new List<NPC>();
 	}
 
+	private void Start() {
+		const float REPETITION_TIME = 5f;
+		InvokeRepeating(nameof(MakeNpcCustomer), REPETITION_TIME, REPETITION_TIME);
+	}
+
 	[ContextMenu("Make Customer")]
 	public void MakeNpcCustomer() {
 		if(freeRoamingNpc.Count < 0)

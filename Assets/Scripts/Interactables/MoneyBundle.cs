@@ -10,8 +10,16 @@ public class MoneyBundle : Interactable
 	[SerializeField] private ParticleSystem moneyParticles;
 
 	private void Awake() {
+		transform.localScale = Vector3.zero;
 		collectMoney = GetComponent<AudioSource>();
 		boxCollider = GetComponent<BoxCollider>();
+	}
+
+	private void OnEnable() {
+		const float SPAWN_TIME = .2f;
+		LTDescr tween = LeanTween.scale(gameObject, Vector3.one, SPAWN_TIME);
+		tween.setEase(LeanTweenType.easeOutQuart);
+		tween.setOnComplete(() => collectMoney.Play());
 	}
 
 	protected override void PlayerInteracted(PlayerController player) {

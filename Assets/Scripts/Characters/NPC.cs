@@ -73,4 +73,8 @@ public class NPC : MonoBehaviour
 		currentState = States.FREE_ROAMING;
 		OnTargetReached += OnTargetReachedHandler;
 	}
+
+	public void StopAgent(bool value) {
+		agent.isStopped = value;
+	}
 }

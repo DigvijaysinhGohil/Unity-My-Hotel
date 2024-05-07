@@ -13,6 +13,8 @@ public class Room : Interactable
 	[SerializeField] private GameObject cleanUI;
 	[SerializeField] private Image progressFill;
 	[SerializeField] private AudioSource clock;
+	[SerializeField] private Transform sleepAnchor;
+	[SerializeField] private ParticleSystem sleepyParticles;
 
 	private void Awake() {
 		if(!isUnlocked) {
@@ -39,6 +41,10 @@ public class Room : Interactable
         }
     }
 
+	protected override void NpcInteracated(NPC npc) {
+		SleepNpc(npc);
+	}
+
 	private void StartCleaning() {
 		const float CLEAN_TIME = 5f;
 		clock.Play();
@@ -56,7 +62,15 @@ public class Room : Interactable
 		clock.Stop();
 	}
 
+	private void SleepNpc(NPC npc) {
+		sleepyParticles.Play();
+		npc.StopAgent(true);
+		npc.transform.position = sleepAnchor.transform.position;
+		npc.transform.rotation = sleepAnchor.transform.rotation;
+	}
+
 	public void UnlockRoom() {
+		isUnlocked = true;
 		doorCollider.enabled = true;
 		roomUnlocked.Play();
 	}
@@ -65,5 +79,9 @@ public class Room : Interactable
 		progressFill.fillAmount = 0f;
 		isDirty = value;
 		cleanUI.SetActive(value);
+	}
+
+	public Vector3 GetSleepPos() {
+		return sleepAnchor.position;
 	}
 }

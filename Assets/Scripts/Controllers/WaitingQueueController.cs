@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class WaitingQueueController : MonoBehaviour
 {
@@ -23,7 +24,10 @@ public class WaitingQueueController : MonoBehaviour
 	public void AddCustomerToQueue(NPC customer) {
 		customers.Add(customer);
 		customer.MoveTo(enterancePosition);
-		customer.OnTargetReached += () => customer.MoveTo(waitingQueuePositions[customers.IndexOf(customer)]);
+		customer.OnTargetReached += () => {
+			int index = customers.IndexOf(customer);
+			customer.MoveTo(waitingQueuePositions[index]);
+		};
 	}
 
 	public void RemoveCustomerFromQueue(NPC customer) {
@@ -32,5 +36,18 @@ public class WaitingQueueController : MonoBehaviour
 			customer.OnTargetReached = null;
 			customer.SetStateFreeRoam();
 		}
+	}
+
+	public NPC GetFirstCustomer() {
+		if(customers.Count == 0) return null;
+
+		NPC customer = customers[0];
+		customers.Remove(customer);
+		customer.OnTargetReached = null;
+		return customer;
+	}
+
+	public bool IsCustomer(NPC npc) {
+		return customers.Contains(npc);
 	}
 }
