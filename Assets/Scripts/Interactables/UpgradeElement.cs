@@ -7,7 +7,6 @@ public class UpgradeElement : MonoBehaviour
 
 	[SerializeField] private float upgradeCost = 50;
 	[SerializeField] private Image progressFill;
-	[SerializeField] private MoneyController moneyController;
 	[SerializeField] private Room room;
 	[SerializeField] private ParticleSystem particles;
 
@@ -17,7 +16,7 @@ public class UpgradeElement : MonoBehaviour
 
 	private void OnTriggerEnter(Collider other) {
 		if(other.TryGetComponent<PlayerController>(out PlayerController player)) {
-			if(moneyController.Money >= upgradeCost) {
+			if(MoneyController.Instance.Money >= upgradeCost) {
 				StartUpgrade();
 			}
 		}
@@ -54,7 +53,7 @@ public class UpgradeElement : MonoBehaviour
 		LeanTween.scaleZ(room.gameObject, 1f, SCALE_Z_TIME).setEase(LeanTweenType.easeInOutCubic).setOnComplete(() => {
 			LeanTween.scaleY(room.gameObject, 1f, SCALE_Y_TIME).setEase(LeanTweenType.easeOutQuad).setOnComplete(() => { 
 				room.UnlockRoom();
-				moneyController.SpendMoney(upgradeCost);
+				MoneyController.Instance.SpendMoney(upgradeCost);
 				Destroy(gameObject);
 			});
 		});

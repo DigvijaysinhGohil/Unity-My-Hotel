@@ -7,7 +7,6 @@ public class MoneyBundle : MonoBehaviour
 	
 	public float money = 20f;
 
-	[SerializeField] private MoneyController moneyController;
 	[SerializeField] private ParticleSystem moneyParticles;
 
 	private void Awake() {
@@ -22,7 +21,7 @@ public class MoneyBundle : MonoBehaviour
 			particles.Play();
 			const float DESTROY_DELAY = 2f;
 			Destroy(particles.gameObject, DESTROY_DELAY);
-			moneyController.AddMoney(money);
+			MoneyController.Instance.AddMoney(money);
 			foreach(Transform child in transform) {
 				child.gameObject.SetActive(false);
 			}

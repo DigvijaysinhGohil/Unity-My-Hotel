@@ -20,8 +20,18 @@ public class MoneyController : MonoBehaviour
 		}
 	}
 
+	public static MoneyController Instance { get; private set; }
+
+	private void Awake() {
+		Instance = this;
+	}
+
 	private void Start() {
 		Money = 0f;
+	}
+
+	private void OnDestroy() {
+		Instance = null;
 	}
 
 	private void AnimateCounter(float oldMoney, float newMoney) {
