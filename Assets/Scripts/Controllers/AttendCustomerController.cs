@@ -4,7 +4,6 @@ using UnityEngine.UI;
 
 public class AttendCustomerController : Interactable {
 	private bool isPlayerAttending = false;
-	public bool isNpcInArea;
 	private NPC customer;
 
 	[SerializeField] private List<Room> rooms;
@@ -18,7 +17,6 @@ public class AttendCustomerController : Interactable {
 	private bool IsNpcInArea { get { return customer != null && waitingQueueController.IsCustomer(customer); } }
 
 	private void Update() {
-		isNpcInArea = IsNpcInArea;
 		attendUI.alpha = CanAttendCustomer() ? 1f : 0.2f;
 	}
 
@@ -74,7 +72,7 @@ public class AttendCustomerController : Interactable {
 	}
 
 	private void CancelAttending() {
-		LeanTween.cancelAll();
+		LeanTween.cancel(gameObject);
 		progressFill.fillAmount = 0f;
 		clock.Stop();
 		isPlayerAttending = false;

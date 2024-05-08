@@ -39,7 +39,7 @@ public class Door : Interactable {
 	}
 
 	private void OpenDoor() {
-		LeanTween.cancelAll();
+		LeanTween.cancel(doorObject.gameObject);
 		doorOpenSfx.Play();
 		LTDescr tween = LeanTween.rotateLocal(doorObject.gameObject, new Vector3(0, openAngle, 0), animationTime);
 		tween.setEase(easeType);
@@ -48,7 +48,7 @@ public class Door : Interactable {
 	private void CloseDoor() {
 		if(characterCountInArea > 0)
 			return; // SOMEONE IS STANDING IN INTERACTABLE AREA
-		LeanTween.cancelAll();
+		LeanTween.cancel(doorObject.gameObject);
 		doorCloseSfx.Play();
 		LTDescr tween = LeanTween.rotateLocal(doorObject.gameObject, new Vector3(0, closeAngle, 0), animationTime);
 		tween.setEase(easeType);

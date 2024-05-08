@@ -27,13 +27,6 @@ public class UpgradeElement : Interactable
 		}
 	}
 
-	private void CancelUpgrade() {
-		particles.Stop();
-		spendMoney.Stop();
-		LeanTween.cancelAll();
-		progressFill.fillAmount = 0;
-	}
-
 	private void StartUpgrade() {
 		particles.Play();
 		const float UPGRADE_TIME = 5f;
@@ -44,6 +37,13 @@ public class UpgradeElement : Interactable
 		});
 		tween.setEase(LeanTweenType.linear);
 		tween.setOnComplete(() => UnlockRoom());
+	}
+	
+	private void CancelUpgrade() {
+		particles.Stop();
+		spendMoney.Stop();
+		LeanTween.cancel(gameObject);
+		progressFill.fillAmount = 0;
 	}
 
 	private void UnlockRoom() {

@@ -65,7 +65,7 @@ public class Room : Interactable {
 	}
 
 	private void CancelCleaning() {
-		LeanTween.cancelAll();
+		LeanTween.cancel(gameObject);
 		progressFill.fillAmount = 0f;
 		clock.Stop();
 	}
