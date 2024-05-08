@@ -1,5 +1,5 @@
 # Unity-My-Hotel
-A unity game demo in simulation, strategy and management genre.
+A unity game demo in simulation, strategy and management genre. A [showcase video](https://youtu.be/vO5d3ndOxxY) can be found here.
 
 Shield: [![CC BY-NC 4.0][cc-by-nc-shield]][cc-by-nc]
 
