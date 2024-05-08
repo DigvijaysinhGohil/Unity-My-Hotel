@@ -18,7 +18,6 @@ public class NPCsController : MonoBehaviour
 		InvokeRepeating(nameof(MakeNpcCustomer), REPETITION_TIME, REPETITION_TIME);
 	}
 
-	[ContextMenu("Make Customer")]
 	public void MakeNpcCustomer() {
 		if(freeRoamingNpc.Count < 0)
 			return;
@@ -33,12 +32,10 @@ public class NPCsController : MonoBehaviour
 		waitingQueueController.AddCustomerToQueue(npc);
 	}
 
-	[ContextMenu("Make Free Roamer")]
-	public void MakeNpcFreeRoamer() {
-		if(customerNpc.Count < 0)
+	public void MakeNpcFreeRoamer(NPC npc) {
+		if(!customerNpc.Contains(npc))
 			return;
 
-		NPC npc = customerNpc[0];
 		customerNpc.Remove(npc);
 		freeRoamingNpc.Add(npc);
 

@@ -33,9 +33,9 @@ public class WaitingQueueController : MonoBehaviour
 	public void RemoveCustomerFromQueue(NPC customer) {
 		if(customers.Contains(customer)) {
 			customers.Remove(customer);
-			customer.OnTargetReached = null;
-			customer.SetStateFreeRoam();
 		}
+		customer.OnTargetReached = null;
+		customer.SetStateFreeRoam();
 	}
 
 	public NPC GetFirstCustomer() {

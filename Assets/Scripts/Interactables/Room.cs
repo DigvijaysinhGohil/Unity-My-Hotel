@@ -1,13 +1,13 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-public class Room : Interactable
-{
+public class Room : Interactable {
 	public bool isUnlocked = true;
 	public bool isOccupied = false;
 	public bool isDirty = false;
 
 	private AudioSource roomUnlocked;
+	private NPC npc;
 
 	[SerializeField] private BoxCollider doorCollider;
 	[SerializeField] private GameObject cleanUI;
@@ -15,6 +15,7 @@ public class Room : Interactable
 	[SerializeField] private AudioSource clock;
 	[SerializeField] private Transform sleepAnchor;
 	[SerializeField] private ParticleSystem sleepyParticles;
+	[SerializeField] private NPCsController npcController;
 
 	private void Awake() {
 		if(!isUnlocked) {
@@ -36,13 +37,20 @@ public class Room : Interactable
 	}
 
 	protected override void PlayerStoppedInteracting(PlayerController player) {
-        if (isDirty) {
+		if(isDirty) {
 			CancelCleaning();
-        }
-    }
+		}
+	}
 
 	protected override void NpcInteracated(NPC npc) {
-		SleepNpc(npc);
+		if(npc.CurrentState == NPC.States.BEING_CUSTOMER) {
+			this.npc = npc;
+			SleepNpc(npc);
+		}
+	}
+
+	protected override void NpcStoppedInteracting(NPC npc) {
+		this.npc = null;
 	}
 
 	private void StartCleaning() {
@@ -64,9 +72,19 @@ public class Room : Interactable
 
 	private void SleepNpc(NPC npc) {
 		sleepyParticles.Play();
-		npc.StopAgent(true);
-		npc.transform.position = sleepAnchor.transform.position;
-		npc.transform.rotation = sleepAnchor.transform.rotation;
+		npc.FallAsleep(sleepAnchor);
+		const float SLEEP_TIME = 5f;
+		Invoke(nameof(WakeNpc), SLEEP_TIME);
+	}
+
+	private void WakeNpc() {
+		if(npc != null) {
+			sleepyParticles.Stop();
+			npcController.MakeNpcFreeRoamer(npc);
+			npc.WakeUp();
+			isOccupied = false;
+			SetDirty(true);
+		}
 	}
 
 	public void UnlockRoom() {

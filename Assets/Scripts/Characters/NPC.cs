@@ -1,21 +1,22 @@
-using System;
 using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.Events;
 
 public class NPC : MonoBehaviour
 {
-	private enum States { FREE_ROAMING, BEING_CUSTOMER}
+	public enum States { FREE_ROAMING, BEING_CUSTOMER}
 
 	private Vector3 targetPosition;
 	private NavMeshAgent agent;
+	private CapsuleCollider capsuleCollider;
 	private CharacterAnimationController animationController;
 	private CharacterAudioController audioController;
 
 	private bool idle = true;
-	private States currentState = States.FREE_ROAMING;
 
 	[SerializeField] private RandomPositionGenerator positionGenerator;
+	
+	public States CurrentState { get; private set; } = States.FREE_ROAMING;
 
 	public UnityAction OnTargetReached;
 
@@ -23,6 +24,7 @@ public class NPC : MonoBehaviour
 		agent = GetComponent<NavMeshAgent>();
 		animationController = GetComponent<CharacterAnimationController>();
 		audioController = GetComponent<CharacterAudioController>();
+		capsuleCollider = GetComponent<CapsuleCollider>();
 		OnTargetReached += OnTargetReachedHandler;
 	}
 
@@ -33,7 +35,7 @@ public class NPC : MonoBehaviour
 	private void Update() {
 		CheckTargetReached();
 		UpdateWalkAnimation();
-		if(currentState == States.FREE_ROAMING) {
+		if(CurrentState == States.FREE_ROAMING) {
 			if(idle) {
 				WalkAround();
 			}
@@ -48,7 +50,7 @@ public class NPC : MonoBehaviour
 	}
 
 	private void OnTargetReachedHandler() {
-		if(currentState == States.FREE_ROAMING) {
+		if(CurrentState == States.FREE_ROAMING) {
 			idle = true;
 		}
 	}
@@ -65,16 +67,29 @@ public class NPC : MonoBehaviour
 	}
 
 	public void MoveTo(Vector3 destination) {
-		currentState = States.BEING_CUSTOMER;
+		CurrentState = States.BEING_CUSTOMER;
 		agent.SetDestination(destination);
 	}
 
 	public void SetStateFreeRoam() {
-		currentState = States.FREE_ROAMING;
+		CurrentState = States.FREE_ROAMING;
 		OnTargetReached += OnTargetReachedHandler;
 	}
 
-	public void StopAgent(bool value) {
-		agent.isStopped = value;
+	public void FallAsleep(Transform sleepAnchor) {
+		agent.enabled = false;
+		capsuleCollider.enabled = false;
+		transform.position = sleepAnchor.position;
+		transform.rotation = sleepAnchor.rotation;
+	}
+
+	public void WakeUp() {
+		Vector3 pos = transform.position;
+		pos.y = 0;
+		pos.z -= 1f;
+		transform.position = pos;
+		transform.eulerAngles = Vector3.up * -180f;
+		agent.enabled = true;
+		capsuleCollider.enabled = true;
 	}
 }
