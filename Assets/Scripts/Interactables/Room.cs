@@ -82,7 +82,7 @@ public class Room : Interactable {
 	private void SleepNpc(NPC npc) {
 		sleepyParticles.Play();
 		npc.FallAsleep(sleepAnchor);
-		const float SLEEP_TIME = 5f;
+		const float SLEEP_TIME = 15f;
 		Invoke(nameof(WakeNpc), SLEEP_TIME);
 	}
 

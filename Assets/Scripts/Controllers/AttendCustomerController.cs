@@ -33,6 +33,8 @@ public class AttendCustomerController : Interactable {
 	}
 
 	protected override void NpcInteracated(NPC npc) {
+		if(npc.CurrentState == NPC.States.FREE_ROAMING)
+			return;
 		customer = npc;
 	}
 

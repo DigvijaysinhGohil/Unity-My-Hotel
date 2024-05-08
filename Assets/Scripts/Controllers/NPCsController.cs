@@ -3,8 +3,8 @@ using UnityEngine;
 
 public class NPCsController : MonoBehaviour
 {
-	public List<NPC> freeRoamingNpc;
-	public List<NPC> customerNpc;
+	private List<NPC> freeRoamingNpc;
+	private List<NPC> customerNpc;
 
 	[SerializeField] private WaitingQueueController waitingQueueController;
 

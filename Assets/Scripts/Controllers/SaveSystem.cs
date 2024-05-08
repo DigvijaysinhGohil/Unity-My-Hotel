@@ -1,10 +1,9 @@
 using System;
 using UnityEngine;
-using static UnityEngine.Rendering.DebugUI;
 
 public class SaveSystem : MonoBehaviour
 {
-	private const string SAVE_KEY = "Player progress";
+	public const string SAVE_KEY = "Player progress";
 
 	public static Progress playerProgress;
 

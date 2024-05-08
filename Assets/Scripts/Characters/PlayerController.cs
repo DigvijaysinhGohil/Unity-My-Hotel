@@ -9,6 +9,7 @@ public class PlayerController : MonoBehaviour
 
 	[SerializeField] private float speed = 10;
 	[SerializeField] private float rotationDamp = .1f;
+	[SerializeField] private Joystick joystick;
 
 	private void Awake() {
 		rigidBody = GetComponent<Rigidbody>();
@@ -27,7 +28,11 @@ public class PlayerController : MonoBehaviour
 	}
 
 	private void ReadInput() {
-		inputVector = new Vector3(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical")).normalized;
+		inputVector = new Vector3(
+			Input.GetAxis("Horizontal") + joystick.Horizontal,
+			0,
+			Input.GetAxis("Vertical") + joystick.Vertical
+		).normalized;
 	}
 
 	private void Move() {
