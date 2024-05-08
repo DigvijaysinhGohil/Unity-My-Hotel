@@ -27,7 +27,7 @@ public class MoneyController : MonoBehaviour
 	}
 
 	private void Start() {
-		Money = 0f;
+		Money = SaveSystem.playerProgress.money;
 	}
 
 	private void OnDestroy() {

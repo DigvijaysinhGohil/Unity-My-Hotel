@@ -43,8 +43,11 @@ public class AttendCustomerController : Interactable {
 	}
 
 	private bool CanAttendCustomer() {
-		Room availableRoom = rooms.Find(room => room.isUnlocked && !room.isOccupied && !room.isDirty);
-		return IsNpcInArea && availableRoom != null;
+		return IsNpcInArea && GetAvailableRoom() != null;
+	}
+
+	private Room GetAvailableRoom() {
+		return rooms.Find(room => room.roomState.isUnlocked && !room.roomState.isOccupied && !room.roomState.isDirty);
 	}
 
 	private void StartAttending() {
@@ -79,9 +82,9 @@ public class AttendCustomerController : Interactable {
 	}
 
 	private void GotoRoom(NPC customer) {
-		Room availableRoom = rooms.Find(room => room.isUnlocked && !room.isOccupied && !room.isDirty);
+		Room availableRoom = GetAvailableRoom();
 		if(availableRoom != null) {
-			availableRoom.isOccupied = true;
+			availableRoom.roomState.isOccupied = true;
 			customer.MoveTo(availableRoom.GetSleepPos());
 		}
 	}

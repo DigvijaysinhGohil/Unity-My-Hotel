@@ -2,12 +2,12 @@ using UnityEngine;
 using UnityEngine.UI;
 
 public class Room : Interactable {
-	public bool isUnlocked = true;
-	public bool isOccupied = false;
-	public bool isDirty = false;
+	public RoomStates roomState;
 
 	private AudioSource roomUnlocked;
 	private NPC npc;
+
+	[SerializeField] private int roomIndex = 0;
 
 	[SerializeField] private BoxCollider doorCollider;
 	[SerializeField] private GameObject cleanUI;
@@ -18,26 +18,21 @@ public class Room : Interactable {
 	[SerializeField] private NPCsController npcController;
 
 	private void Awake() {
-		if(!isUnlocked) {
-			transform.localScale = Vector3.right;
-		}
 		roomUnlocked = GetComponent<AudioSource>();
 	}
 
-	private void Update() {
-		if(Input.GetKeyDown(KeyCode.Space)) {
-			SetDirty(true);
-		}
+	private void Start() {
+		LoadRoomState();
 	}
 
 	protected override void PlayerInteracted(PlayerController player) {
-		if(isDirty) {
+		if(roomState.isDirty) {
 			StartCleaning();
 		}
 	}
 
 	protected override void PlayerStoppedInteracting(PlayerController player) {
-		if(isDirty) {
+		if(roomState.isDirty) {
 			CancelCleaning();
 		}
 	}
@@ -51,6 +46,20 @@ public class Room : Interactable {
 
 	protected override void NpcStoppedInteracting(NPC npc) {
 		this.npc = null;
+	}
+
+	private void LoadRoomState() {
+		roomState = SaveSystem.playerProgress.rooms[roomIndex];
+		if(!roomState.isUnlocked) {
+			transform.localScale = Vector3.right;
+		}
+		if(roomState.isOccupied) {
+			roomState.isOccupied = false;
+			SetDirty(true);
+		}
+		if(roomState.isDirty) {
+			SetDirty(true);
+		}
 	}
 
 	private void StartCleaning() {
@@ -82,20 +91,21 @@ public class Room : Interactable {
 			sleepyParticles.Stop();
 			npcController.MakeNpcFreeRoamer(npc);
 			npc.WakeUp();
-			isOccupied = false;
+			roomState.isOccupied = false;
 			SetDirty(true);
 		}
 	}
 
-	public void UnlockRoom() {
-		isUnlocked = true;
+	public void UnlockRoom(bool playSound = true) {
+		roomState.isUnlocked = true;
 		doorCollider.enabled = true;
-		roomUnlocked.Play();
+		if(playSound)
+			roomUnlocked.Play();
 	}
 
 	public void SetDirty(bool value) {
 		progressFill.fillAmount = 0f;
-		isDirty = value;
+		roomState.isDirty = value;
 		cleanUI.SetActive(value);
 	}
 

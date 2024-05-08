@@ -14,6 +14,10 @@ public class UpgradeElement : Interactable
 		spendMoney = GetComponent<AudioSource>();
 	}
 
+	private void Start() {
+		LoadProgress();
+	}
+
 	protected override void PlayerInteracted(PlayerController player) {
 		if(MoneyController.Instance.Money >= upgradeCost) {
 			StartUpgrade();
@@ -24,6 +28,16 @@ public class UpgradeElement : Interactable
 		const float CANCEL_THRESHOLD = 0.9f;
 		if(progressFill.fillAmount < CANCEL_THRESHOLD) {
 			CancelUpgrade();
+		}
+	}
+
+	private void LoadProgress() {
+		if(SaveSystem.playerProgress.rooms[1].isUnlocked) {
+			room.UnlockRoom(false);
+			Destroy(gameObject);
+		}
+		else {
+			gameObject.SetActive(false);
 		}
 	}
 
